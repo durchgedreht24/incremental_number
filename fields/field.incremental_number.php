@@ -60,13 +60,30 @@
 		}
 
 		public function getNewNumber(){
-			$last_num = Symphony::Database()->fetch("
+			$year = date('Y');
+			$next = $year . '-01';
+
+			$last = Symphony::Database()->fetchVar("value", 0, "
 				SELECT `value`
 				FROM `tbl_entries_data_".$this->get('id')."`
 				ORDER BY `value` DESC LIMIT 1
 			");
 
-			return (int) (!empty($last_num)) ? $last_num[0]['value'] + 1 : $this->get('start_number');
+			if(empty($last)) {
+				return $next;
+			}
+
+			list($last_year, $last_number) = explode('-', $last);
+
+			// Current year
+			if($last_year == $year) {
+				return $year . '-' . str_pad(intval($last_number) + 1, 2, '0', STR_PAD_LEFT);
+			}
+
+			// New year 
+			else {
+				return $next;
+			}
 		}
 
 		public function commit(){
@@ -101,13 +118,13 @@
 		public function checkPostFieldData($data, &$message, $entry_id = NULL){
 			$message = NULL;
 
-			if( $this->get('required') == 'yes' && strlen($data) == 0 ){
-				$message = 'This is a required field.';
+			if($this->get('required') == 'yes' && strlen($data) == 0) {
+				$message = __('This is a required field.');
 				return self::__MISSING_FIELDS__;
 			}
 
-			if( strlen($data) > 0 && !is_numeric($data) ){
-				$message = 'Must be a number.';
+			if(strlen($data) > 0 && !preg_match('/^[0-9-]+$/', $data)) {
+				$message = __('Must be a team ID.');
 				return self::__INVALID_FIELDS__;
 			}
 
