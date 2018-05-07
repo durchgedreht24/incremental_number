@@ -27,7 +27,7 @@
 			return true;
 		}
 
-		public function displaySettingsPanel(&$wrapper, $errors = NULL){
+		public function displaySettingsPanel(XMLElement &$wrapper, $errors = NULL){
 			parent::displaySettingsPanel($wrapper, $errors);
 
 			$label = Widget::Label(__('Start Number'));
@@ -36,7 +36,7 @@
 			$this->appendShowColumnCheckbox($wrapper);
 		}
 
-		public function displayPublishPanel(&$wrapper, $data = NULL, $flagWithError = NULL, $fieldnamePrefix = NULL, $fieldnamePostfix = NULL){
+		public function displayPublishPanel(XMLElement &$wrapper, $data = NULL, $flagWithError = NULL, $fieldnamePrefix = NULL, $fieldnamePostfix = NULL, $entry_id = NULL){
 			$value = $data['value'];
 			$label = Widget::Label($this->get('label'));
 
@@ -53,7 +53,7 @@
 			else $wrapper->appendChild($label);
 		}
 
-		public function processRawFieldData($data, &$status, $message, $simulate = false, $entry_id = null){
+		public function processRawFieldData($data, &$status, &$message = NULL, $simulate = false, $entry_id = NULL){
 			if( !$data ) $data = $this->getNewNumber();
 
 			return parent::processRawFieldData($data, $status, $message, $simulate, $entry_id);
@@ -80,7 +80,7 @@
 				return $year . '-' . str_pad(intval($last_number) + 1, 2, '0', STR_PAD_LEFT);
 			}
 
-			// New year 
+			// New year
 			else {
 				return $next;
 			}
@@ -105,7 +105,7 @@
 
 		}
 
-		public function displayDatasourceFilterPanel(&$wrapper, $data = NULL, $errors = NULL, $fieldnamePrefix = NULL, $fieldnamePostfix = NULL){
+		public function displayDatasourceFilterPanel(XMLElement &$wrapper, $data = NULL, $errors = NULL, $fieldnamePrefix = NULL, $fieldnamePostfix = NULL){
 			$wrapper->appendChild(new XMLElement('h4', $this->get('label').' <i>'.$this->Name().'</i>'));
 			$label = Widget::Label('Value');
 			$label->appendChild(Widget::Input('fields[filter]'.($fieldnamePrefix ? '['.$fieldnamePrefix.']' : '').'['.$this->get('id').']'.($fieldnamePostfix ? '['.$fieldnamePostfix.']' : ''), ($data ? General::sanitize($data) : NULL)));
